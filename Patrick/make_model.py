@@ -1,23 +1,30 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from tensorflow import keras
+from tensorflow.keras.preprocessing.image import ImageDataGenerator, load_img
+
+train_dir = './dataset/train'
+validation_dir = './dataset/validation'
+test_dir = './dataset/test'
+image_size = 600
+
 from tensorflow.keras.applications import VGG16
-from tensorflow.keras import models
-from tensorflow.keras import layers
-from tensorflow.keras import optimizers
 
-train_dir = 'dataset/train'
-validation_dir = 'dataset/validation'
-image_size = 224
+vgg_conv = VGG16(weights='imagenet', 
+                 include_top=False, 
+                 input_shape=(image_size, image_size, 3))
 
-
-#Load the VGG model
-vgg_conv = VGG16(weights='imagenet', include_top=False, input_shape=(image_size, image_size, 3))
-
-# Freeze all the layers
 for layer in vgg_conv.layers[:-4]:
     layer.trainable = False
 
 # Check the trainable status of the individual layers
 for layer in vgg_conv.layers:
     print(layer, layer.trainable)
+
+
+from tensorflow.keras import models
+from tensorflow.keras import layers
+from tensorflow.keras import optimizers
 
 # Create the model
 model = models.Sequential()
@@ -29,7 +36,7 @@ model.add(vgg_conv)
 model.add(layers.Flatten())
 model.add(layers.Dense(1024, activation='relu'))
 model.add(layers.Dropout(0.5))
-model.add(layers.Dense(3, activation='softmax'))
+model.add(layers.Dense(9, activation='softmax'))
 
 # Show a summary of the model. Check the number of trainable parameters
 model.summary()
@@ -45,7 +52,7 @@ train_datagen = ImageDataGenerator(
 validation_datagen = ImageDataGenerator(rescale=1./255)
 
 # Change the batchsize according to your system RAM
-train_batchsize = 50
+train_batchsize = 16
 val_batchsize = 10
 
 # Data Generator for Training data
@@ -79,47 +86,49 @@ history = model.fit_generator(
       verbose=1)
 
 # Save the Model
-model.save('da_last4_layers.h5')
+model.save('cluster1_model.h5')
 
 # Create a generator for prediction
-validation_generator = validation_datagen.flow_from_directory(
-        validation_dir,
+test_generator = validation_datagen.flow_from_directory(
+        test_dir,
         target_size=(image_size, image_size),
         batch_size=val_batchsize,
         class_mode='categorical',
         shuffle=False)
 
 # Get the filenames from the generator
-fnames = validation_generator.filenames
+fnames = test_generator.filenames
 
 # Get the ground truth from generator
-ground_truth = validation_generator.classes
+ground_truth = test_generator.classes
 
 # Get the label to class mapping from the generator
-label2index = validation_generator.class_indices
+label2index = test_generator.class_indices
 
 # Getting the mapping from class index to class label
 idx2label = dict((v,k) for k,v in label2index.items())
 
 # Get the predictions from the model using the generator
-predictions = model.predict_generator(validation_generator, steps=validation_generator.samples/validation_generator.batch_size,verbose=1)
+predictions = model.predict_generator(test_generator, 
+                                      steps=test_generator.samples/test_generator.batch_size,
+                                      verbose=1)
 predicted_classes = np.argmax(predictions,axis=1)
 
-errors = np.where(predicted_classes != ground_truth)[0]
-print("No of errors = {}/{}".format(len(errors),validation_generator.samples))
+correct = np.where(predicted_classes == ground_truth)[0]
+print("No of correct prediction = {}/{}".format(len(correct),test_generator.samples))
 
-# Show the errors
-for i in range(len(errors)):
-    pred_class = np.argmax(predictions[errors[i]])
+# Show the correct answer
+for i in range(len(correct)):
+    pred_class = np.argmax(predictions[correct[i]])
     pred_label = idx2label[pred_class]
     
     title = 'Original label:{}, Prediction :{}, confidence : {:.3f}'.format(
-        fnames[errors[i]].split('/')[0],
+        fnames[correct[i]].split('/')[0],
         pred_label,
-        predictions[errors[i]][pred_class])
+        predictions[correct[i]][pred_class])
     
-    original = load_img('{}/{}'.format(validation_dir,fnames[errors[i]]))
-    plt.figure(figsize=[7,7])
+    original = load_img('{}/{}'.format(test_dir,fnames[correct[i]]))
+    plt.figure(figsize=[4,4])
     plt.axis('off')
     plt.title(title)
     plt.imshow(original)

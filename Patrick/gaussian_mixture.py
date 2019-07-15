@@ -4,6 +4,11 @@ import numpy as np
 from matplotlib.patches import Ellipse
 from sklearn.mixture import GaussianMixture as GMM
 
+from imagesearch import config
+
+ht_result = np.genfromtxt(config.CIRCLE_DETECTOR, delimiter=",", skip_header=1)
+X = ht_result[:,1:3]
+
 def draw_ellipse(n_class, position, covariance, ax=None, **kwargs):
     """Draw an ellipse with a given position and covariance"""
     ax = ax or plt.gca()
@@ -38,15 +43,13 @@ def plot_gmm(n_class, gmm, X, label=True, ax=None):
     return labels
 
 def save_result(labels):
-    df = pd.read_csv('Result/circle_detected.csv')
+    df = pd.read_csv(config.CIRCLE_DETECTOR)
     df['Wood Class'] = labels
-    df.to_excel('Result/GMM_result.xlsx', index = False)
+    df.to_excel(config.GMM_XLSX, index = False)
 
 def execute_gmm(n_class):
     gmm = GMM(n_components=n_class, covariance_type='full', random_state=500)
     labels = plot_gmm(n_class, gmm, X)
     save_result(labels)
 
-ht_result = np.genfromtxt("Result/circle_detected.csv", delimiter=",", skip_header=1)
-X = ht_result[:,1:3]
 execute_gmm(6)

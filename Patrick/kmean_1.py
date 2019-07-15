@@ -4,22 +4,33 @@ import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.cluster import KMeans
 
-ht_result = np.genfromtxt("Result/circle_detector/circle_detected.csv", delimiter=",", skip_header=1)
+from imagesearch import config
+
+ht_result = np.genfromtxt(config.CIRCLE_DETECTOR, delimiter=",", skip_header=1)
     
 X = ht_result[:,1:]
 
-def execute():
-    kmeans = KMeans(n_clusters=6, max_iter=1000, algorithm='auto')
+def find_cluster(k):
+    kmeans = KMeans(n_clusters=k, max_iter=1000, algorithm='auto')
     kmeans.fit(X)
     y_kmeans = kmeans.predict(X)
-    plt.scatter(X[:, 0], X[:, 1], c=y_kmeans, s=50, cmap='viridis')
-
     centers = kmeans.cluster_centers_
-    plt.scatter(centers[:, 0], centers[:, 1], c='black', s=200, alpha=0.5)
-    plt.savefig('Result/clustering/kmean1.png')
 
-    df = pd.read_csv('Result/circle_detector/circle_detected.csv')
+    return y_kmeans, centers
+
+def plot_cluster(y_kmeans, centers):
+    plt.scatter(X[:, 0], X[:, 1], c=y_kmeans, s=50, cmap='viridis')
+    plt.scatter(centers[:, 0], centers[:, 1], c='black', s=200, alpha=0.5)
+    plt.savefig(config.KMEAN1_IMG)
+
+def save_to_xlsx(y_kmeans):
+    df = pd.read_csv(config.CIRCLE_DETECTOR)
     df['Wood Class'] = y_kmeans
-    df.to_excel('Result/clustering/Kmean1.xlsx', index = False)
+    df.to_excel(config.KMEAN1_XLSX, index = False)
+
+def execute(K = config.K):
+    y_kmeans, centers = find_cluster(K)
+    plot_cluster(y_kmeans, centers)
+    save_to_xlsx(y_kmeans)    
 
 execute()

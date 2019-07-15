@@ -11,7 +11,7 @@ ht_result = np.genfromtxt(config.CIRCLE_DETECTOR, delimiter=",", skip_header=1)
     
 X = ht_result[:,1:]
 
-def find_clusters(X, n_clusters, rseed=500):
+def find_clusters(X, n_clusters, rseed=10000):
     # 1. Randomly choose clusters
     rng = np.random.RandomState(rseed)
     i = rng.permutation(X.shape[0])[:n_clusters]
@@ -39,13 +39,14 @@ def plot_cluster(centers, labels):
                 c='black', s=200, alpha=0.5)
     plt.savefig(config.KMEAN2_IMG)
 
-def save_to_xlsx():
+def save_to_xlsx(labels):
     df = pd.read_csv(config.CIRCLE_DETECTOR)
     df['Wood Class'] = labels
-    df.to_excel('Result/clustering/Kmean2.xlsx', index = False)
+    df.to_excel(config.KMEAN2_XLSX, index = False)
 
-def execute():
-    centers, labels = find_clusters(X, 6)
+def execute(K = config.K):
+    centers, labels = find_clusters(X, K)
     plot_cluster(centers, labels)
-    
+    save_to_xlsx(labels)
+
 execute()

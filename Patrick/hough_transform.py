@@ -70,7 +70,7 @@ def execute():
     dir_path = os.listdir(config.ORIG_DATASET_DIR)
     for img_folder in dir_path:
         img_path = os.path.sep.join([config.ORIG_DATASET_DIR, img_folder])
-        img_selected = random.choices(os.listdir(img_path), k=10)
+        img_selected = random.choices(os.listdir(img_path), k=1)
         img_name += img_selected
         for my_img in img_selected:
             # Read image from listed dir
@@ -87,7 +87,7 @@ def execute():
             img_orig, detected_circle, all_circle_rounded = show_circle(img_orig, all_circle)
         
             # save image
-            cv2.imwrite(config.CIRCLE_ROUNDED + '/' + my_img, img_orig)
+            cv2.imwrite(os.path.sep.join([config.CIRCLE_ROUNDED, my_img]), img_orig)
             
             # Save to list for cvs file
             circles.append(detected_circle)
