@@ -1,20 +1,20 @@
 import os
 
 ORIG_DATASET_DIR = os.path.sep.join(['..', '..', 'dataset'])
-DATASET_DIR = os.path.sep.join([['..', '..', 'patrick_dataset'])
+DATASET_DIR = os.path.sep.join(['..', '..', 'patrick_dataset'])
 
 ################################################ CNN ################################################
 TRAIN = "training"
 TEST = "test"
 VAL = "validation"
 
-CLUSTER = ['cluster1', 'cluster2', 'cluster3', 'cluster4', 'cluster5', 'cluster6']
+CLUSTER = ['cluster_0', 'cluster_1', 'cluster_2', 'cluster_3', 'cluster_4', 'cluster_5']
 
 BATCH_SIZE = 32
+EPOCH = 20
 
 COUNTED_CLASSES = len(os.listdir(ORIG_DATASET_DIR))
-
-MODEL1_PATH = os.path.sep.join(['..', 'model', 'patrick.h5'])
+MODEL_PATH = os.path.sep.join(['result', 'model'])
 
 ############################################### Circle ##############################################
 CIRCLE_ROUNDED = os.path.sep.join(['result', 'circle_rounded'])

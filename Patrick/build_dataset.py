@@ -34,25 +34,20 @@ for key in clusters:
             os.makedirs(train_path)
 
         p = os.path.sep.join([config.ORIG_DATASET_DIR, img_sp])
+
         imagePaths = list(paths.list_images(p))
-
         imagePaths = set(imagePaths)
-
         for_val = random.sample(imagePaths, 40)
         for imagePath in for_val:
             shutil.move(imagePath, validation_path)
 
         imagePaths = list(paths.list_images(p))
-
         imagePaths = set(imagePaths)
-
         for_test = random.sample(imagePaths, k=10)
         for imagePath in for_test:
             shutil.move(imagePath, test_path)
 
         imagePaths = list(paths.list_images(p))
-
         imagePaths = set(imagePaths)
-
         for imagePath in imagePaths:
             shutil.move(imagePath, train_path)
