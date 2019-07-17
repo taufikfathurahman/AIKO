@@ -3,10 +3,12 @@ import time
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.cluster import KMeans
+import os
 
 from imagesearch import config
 
-ht_result = np.genfromtxt(config.CIRCLE_DETECTOR, delimiter=",", skip_header=1)
+csv_file = os.path.sep.join([config.CIRCLE_DETECTOR, 'ht0.csv'])
+ht_result = np.genfromtxt(csv_file, delimiter=",", skip_header=1)
     
 X = ht_result[:,1:]
 
@@ -24,7 +26,7 @@ def plot_cluster(y_kmeans, centers):
     plt.savefig(config.KMEAN1_IMG)
 
 def save_to_xlsx(y_kmeans):
-    df = pd.read_csv(config.CIRCLE_DETECTOR)
+    df = pd.read_csv(csv_file)
     df['Wood Class'] = y_kmeans
     df.to_excel(config.KMEAN1_XLSX, index = False)
 

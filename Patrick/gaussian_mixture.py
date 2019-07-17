@@ -3,8 +3,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.patches import Ellipse
 from sklearn.mixture import GaussianMixture as GMM
+import time as tm
 
 from imagesearch import config
+
+start = tm.time()
 
 ht_result = np.genfromtxt(config.CIRCLE_DETECTOR, delimiter=",", skip_header=1)
 X = ht_result[:,1:3]
@@ -52,4 +55,12 @@ def execute_gmm(n_class):
     labels = plot_gmm(n_class, gmm, X)
     save_result(labels)
 
-execute_gmm(6)
+try:
+    execute(6)
+except:
+    print('ERROR : Program failed executed.....')
+
+print('done.....')
+end = tm.time()
+menit = (end-start)/60
+print('Time spent => ', menit, ' minutes')

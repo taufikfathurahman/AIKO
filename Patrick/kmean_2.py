@@ -1,17 +1,22 @@
 import pandas as pd
-import time
+import time as tm
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.metrics import pairwise_distances_argmin
 from sklearn.preprocessing import MinMaxScaler
+import os
 
 from imagesearch import config
 
-ht_result = np.genfromtxt(config.CIRCLE_DETECTOR, delimiter=",", skip_header=1)
-    
-X = ht_result[:,1:]
+start = tm.time()
 
-def find_clusters(X, n_clusters, rseed=10000):
+def get_csv(j):
+    csv_file = os.path.sep.join([config.CIRCLE_DETECTOR, 'ht'+str(j)+'.csv'])
+    ht_result = np.genfromtxt(csv_file, delimiter=",", skip_header=1)
+        
+    return ht_result[:,1:], csv_file
+
+def find_clusters(X, n_clusters, rseed=300):
     # 1. Randomly choose clusters
     rng = np.random.RandomState(rseed)
     i = rng.permutation(X.shape[0])[:n_clusters]
@@ -32,21 +37,30 @@ def find_clusters(X, n_clusters, rseed=10000):
     
     return centers, labels
 
-def plot_cluster(centers, labels):
+def plot_cluster(centers, labels, X, j):
     plt.scatter(X[:, 0], X[:, 1], c=labels,
                 s=50, cmap='viridis')
     plt.scatter(centers[:, 0], centers[:, 1], 
                 c='black', s=200, alpha=0.5)
-    plt.savefig(config.KMEAN2_IMG)
+    plt.savefig(config.KMEAN_IMG[j])
 
-def save_to_xlsx(labels):
-    df = pd.read_csv(config.CIRCLE_DETECTOR)
+def save_to_xlsx(labels, csv_file, j):
+    df = pd.read_csv(csv_file)
     df['Wood Class'] = labels
-    df.to_excel(config.KMEAN2_XLSX, index = False)
+    df.to_excel(config.KMEAN_XLSX[j], index = False)
 
-def execute(K = config.K):
+def execute(j, K = config.K):
+    X, csv_file = get_csv(j)
     centers, labels = find_clusters(X, K)
-    plot_cluster(centers, labels)
-    save_to_xlsx(labels)
+    plot_cluster(centers, labels, X, j)
+    save_to_xlsx(labels, csv_file, j)
 
-execute()
+try:
+    execute(2)
+except:
+    print('ERROR : Program failed executed.....')
+
+print('done.....')
+end = tm.time()
+menit = (end-start)/60
+print('Time spent => ', menit, ' minutes')

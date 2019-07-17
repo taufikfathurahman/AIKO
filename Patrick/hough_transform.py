@@ -61,43 +61,41 @@ def circle_dens(detected_circle, radius_avg, M, N):
         result = (detected_circle * radius_avg) / (M * N)
     return result
 
-def execute():
+def execute(selected_imgpaths, j):
     i = 1
     img_name = []
     circles = []
     circle_rad = []
     circle_den = []
-    dir_path = os.listdir(config.ORIG_DATASET_DIR)
-    for img_folder in dir_path:
-        img_path = os.path.sep.join([config.ORIG_DATASET_DIR, img_folder])
-        img_selected = random.choices(os.listdir(img_path), k=1)
-        img_name += img_selected
-        for my_img in img_selected:
-            # Read image from listed dir
-            img, img_orig = readandconv_image(os.path.sep.join([img_path, my_img]))
-            # Get image dimension
-            M, N = img.shape
-            # Image sharpening 2x
-            img = image_sharpening(img)
-            img = image_sharpening(img)
-            # Image blurring using median blur
-            img = median_blur(img)
-            # Apply hough transform
-            all_circle = hough_transform(img, M)
-            img_orig, detected_circle, all_circle_rounded = show_circle(img_orig, all_circle)
+
+    for my_img in selected_imgpaths:
+        fname = my_img.split(os.path.sep)[-1]
+        # Read image from listed dir
+        img, img_orig = readandconv_image(my_img)
+        # Get image dimension
+        M, N = img.shape
+        # Image sharpening 2x
+        img = image_sharpening(img)
+        img = image_sharpening(img)
+        # Image blurring using median blur
+        img = median_blur(img)
+        # Apply hough transform
+        all_circle = hough_transform(img, M)
+        img_orig, detected_circle, all_circle_rounded = show_circle(img_orig, all_circle)
+    
+        # save image
+        cv2.imwrite(os.path.sep.join([config.CIRCLE_ROUNDED, fname]), img_orig)
         
-            # save image
-            cv2.imwrite(os.path.sep.join([config.CIRCLE_ROUNDED, my_img]), img_orig)
-            
-            # Save to list for cvs file
-            circles.append(detected_circle)
+        # Save to list for cvs file
+        circles.append(detected_circle)
+        img_name.append(fname)
 
-            radius_avg = circle_radius_avg(all_circle_rounded)
-            circle_rad.append(radius_avg)
+        radius_avg = circle_radius_avg(all_circle_rounded)
+        circle_rad.append(radius_avg)
 
-            circle_den.append(circle_dens(detected_circle, radius_avg, M, N))
-            print(i, '-', my_img)
-            i += 1
+        circle_den.append(circle_dens(detected_circle, radius_avg, M, N))
+        print(j, '.', i, '-', my_img)
+        i += 1
         
     csv_dict = {
         'Data Kayu' : img_name,
@@ -106,6 +104,4 @@ def execute():
         'Circle Density' : circle_den
     }
     df = pd.DataFrame(csv_dict)
-    df.to_csv(config.CIRCLE_DETECTOR, index = False)
-
-execute()                                                                          
+    df.to_csv(os.path.sep.join([config.CIRCLE_DETECTOR, 'ht'+str(j)+'.csv']), index = False)                                                                          

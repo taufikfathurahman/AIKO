@@ -7,7 +7,7 @@ import random
 
 from imagesearch import config
 
-cluster_data = pd.read_excel(config.KMEAN2_XLSX)
+cluster_data = pd.read_excel(config.KMEAN_XLSX[0])
 my_cluster = []
 my_cluster.append(cluster_data['Data Kayu'])
 my_cluster.append(cluster_data['Wood Class'])
@@ -20,34 +20,34 @@ for cluster_num in range(config.K):
             wood_id.append(my_cluster[0][idx].split('_')[0])
     clusters[cluster_num] = np.unique(wood_id)
 
-for key in clusters:
-    for img_sp in clusters[key]:
-        validation_path = os.path.sep.join([config.DATASET_DIR, 'cluster_'+str(key), config.VAL, img_sp])
-        test_path = os.path.sep.join([config.DATASET_DIR,  'cluster_'+str(key), config.TEST, img_sp])
-        train_path = os.path.sep.join([config.DATASET_DIR,  'cluster_'+str(key), config.TRAIN, img_sp])
+# for key in clusters:
+#     for img_sp in clusters[key]:
+#         validation_path = os.path.sep.join([config.DATASET_DIR, 'cluster_'+str(key), config.VAL, img_sp])
+#         test_path = os.path.sep.join([config.DATASET_DIR,  'cluster_'+str(key), config.TEST, img_sp])
+#         train_path = os.path.sep.join([config.DATASET_DIR,  'cluster_'+str(key), config.TRAIN, img_sp])
 
-        if not os.path.exists(validation_path):
-            os.makedirs(validation_path)
-        if not os.path.exists(test_path):
-            os.makedirs(test_path)
-        if not os.path.exists(train_path):
-            os.makedirs(train_path)
+#         if not os.path.exists(validation_path):
+#             os.makedirs(validation_path)
+#         if not os.path.exists(test_path):
+#             os.makedirs(test_path)
+#         if not os.path.exists(train_path):
+#             os.makedirs(train_path)
 
-        p = os.path.sep.join([config.ORIG_DATASET_DIR, img_sp])
+#         p = os.path.sep.join([config.ORIG_DATASET_DIR, img_sp])
 
-        imagePaths = list(paths.list_images(p))
-        imagePaths = set(imagePaths)
-        for_val = random.sample(imagePaths, 40)
-        for imagePath in for_val:
-            shutil.move(imagePath, validation_path)
+#         imagePaths = list(paths.list_images(p))
+#         imagePaths = set(imagePaths)
+#         for_val = random.sample(imagePaths, 40)
+#         for imagePath in for_val:
+#             shutil.move(imagePath, validation_path)
 
-        imagePaths = list(paths.list_images(p))
-        imagePaths = set(imagePaths)
-        for_test = random.sample(imagePaths, k=10)
-        for imagePath in for_test:
-            shutil.move(imagePath, test_path)
+#         imagePaths = list(paths.list_images(p))
+#         imagePaths = set(imagePaths)
+#         for_test = random.sample(imagePaths, k=10)
+#         for imagePath in for_test:
+#             shutil.move(imagePath, test_path)
 
-        imagePaths = list(paths.list_images(p))
-        imagePaths = set(imagePaths)
-        for imagePath in imagePaths:
-            shutil.move(imagePath, train_path)
+#         imagePaths = list(paths.list_images(p))
+#         imagePaths = set(imagePaths)
+#         for imagePath in imagePaths:
+#             shutil.move(imagePath, train_path)

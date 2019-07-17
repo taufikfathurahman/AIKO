@@ -83,7 +83,6 @@ def train_data(cluster):
                   metrics=['acc'])
 
       # Train the Model
-      # NOTE that we have multiplied the steps_per_epoch by 2. This is because we are using data augmentation.
       history = model.fit_generator(
             train_generator,
             steps_per_epoch=2*train_generator.samples/train_generator.batch_size,
@@ -119,8 +118,12 @@ def execute(cluster):
       history = train_data(cluster)
       plot_training_result(history, cluster)
 
-start = tm.time()
-execute(config.CLUSTER[5])
+try:
+    execute(config.CLUSTER[5])
+except:
+    print('ERROR : Program failed executed.....')
+
+print('done.....')
 end = tm.time()
 menit = (end-start)/60
-print('Time spent => ', menit)
+print('Time spent => ', menit, ' minutes')
