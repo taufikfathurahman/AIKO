@@ -7,7 +7,7 @@ import random
 
 from imagesearch import config
 
-cluster_data = pd.read_excel(config.KMEAN_XLSX[0])
+cluster_data = pd.read_excel(config.KMEAN_XLSX[1])
 my_cluster = []
 my_cluster.append(cluster_data['Data Kayu'])
 my_cluster.append(cluster_data['Wood Class'])

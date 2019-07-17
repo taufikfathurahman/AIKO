@@ -22,14 +22,19 @@ CIRCLE_DETECTOR = os.path.sep.join(['result', 'circle_detector'])
 
 ############################################## Cluster ##############################################
 K = 6
+
 KMEAN_IMG = [os.path.sep.join(['result', 'clustering', 'kmean_0.png']), 
                 os.path.sep.join(['result', 'clustering', 'kmean_1.png']), 
-                os.path.sep.join(['result', 'clustering', 'kmean_2.png'])]
+                os.path.sep.join(['result', 'clustering', 'kmean_2.png']),
+                os.path.sep.join(['result', 'clustering', 'kmean_new.png'])
+                ]
 GMM_IMG = os.path.sep.join(['result', 'clustering', 'gmm.png'])
 
 KMEAN_XLSX = [os.path.sep.join(['result', 'clustering', 'kmean_0.xlsx']),
                 os.path.sep.join(['result', 'clustering', 'kmean_1.xlsx']),
-                os.path.sep.join(['result', 'clustering', 'kmean_2.xlsx'])]
+                os.path.sep.join(['result', 'clustering', 'kmean_2.xlsx']),
+                os.path.sep.join(['result', 'clustering', 'kmean_new.xlsx'])
+                ]
 GMM_XLSX = os.path.sep.join(['result', 'clustering', 'gmm.xlsx'])
 
 FILTERED_KMEAN = os.path.sep.join(['result', 'filtered_kmean'])

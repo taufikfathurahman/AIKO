@@ -56,7 +56,7 @@ def execute(j, K = config.K):
     save_to_xlsx(labels, csv_file, j)
 
 try:
-    execute(2)
+    execute(3)
 except:
     print('ERROR : Program failed executed.....')
 

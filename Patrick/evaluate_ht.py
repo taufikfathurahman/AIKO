@@ -35,6 +35,7 @@ def filter_ht(j):
 
     d1 = []
     d2 = []
+    count_err = 0
 
     for key in sp_dict:
         if sp_dict[key] <= 3:
@@ -43,6 +44,7 @@ def filter_ht(j):
         else:
             d2.append(key)
             d1.append('-')
+            count_err += 1
 
     csv_dict = {
             'Duplikasi <= 3' : d1,
@@ -53,6 +55,8 @@ def filter_ht(j):
     df.to_excel(os.path.sep.join([config.FILTERED_KMEAN, 
                                 'filtered_ht'+str(j)+'.xlsx']), 
                                 index = False)
+
+    return count_err
 
 def evaluate_filtered_data():
     fht0 = os.path.sep.join([config.FILTERED_KMEAN, 
@@ -90,8 +94,11 @@ def evaluate_filtered_data():
                     'delete_this_sps'+'.xlsx']), index = False)
 
 def execute(j=3):
+    count_err = []
     for i in range(j):
-        filter_ht(i)
+        count_err.append(filter_ht(i))
+
+    print('Err list => ', count_err)
 
     evaluate_filtered_data()
 

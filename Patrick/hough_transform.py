@@ -61,7 +61,7 @@ def circle_dens(detected_circle, radius_avg, M, N):
         result = (detected_circle * radius_avg) / (M * N)
     return result
 
-def execute(selected_imgpaths, j):
+def execute(selected_imgpaths, j=3):
     i = 1
     img_name = []
     circles = []
