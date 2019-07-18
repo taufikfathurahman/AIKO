@@ -93,6 +93,13 @@ def train_data(cluster):
 
       model.save(os.path.sep.join([config.MODEL_PATH, cluster+'.h5']))
 
+      score = model.evaluate_generator(
+            validation_generator,
+            steps=validation_generator.samples/validation_generator.batch_size
+      )
+      print('Loss \t\t:',score[0])
+      print('Accuracy \t:',score[1]*100,'%')
+
       return history
 
 def plot_training_result(history, cluster):
@@ -126,6 +133,6 @@ def execute(cluster):
       print('Time spent => ', menit, ' minutes')
 
 try:
-    execute(config.CLUSTER[5])
+    execute(config.CLUSTER[0])
 except:
     print('ERROR : Program failed executed.....')
