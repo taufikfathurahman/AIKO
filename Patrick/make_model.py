@@ -19,7 +19,7 @@ def train_data(cluster):
       train_dir = os.path.sep.join([config.DATASET_DIR, cluster, config.TRAIN])
       validation_dir = os.path.sep.join([config.DATASET_DIR, cluster, config.VAL])
       sp_counted = len(os.listdir(train_dir))
-      image_size = 270
+      image_size = 280
 
       vgg_conv = VGG16(weights='imagenet', 
                         include_top=False, 
@@ -57,7 +57,7 @@ def train_data(cluster):
       
       validation_datagen = ImageDataGenerator(rescale=1./255)
 
-      # Change the batchsize according to your system RAM
+      # Change the batchsize according to system RAM
       train_batchsize = 8
       val_batchsize = 8
 
@@ -115,15 +115,17 @@ def plot_training_result(history, cluster):
       plt.savefig(os.path.sep.join([config.MODEL_PATH, cluster+'.png']))
 
 def execute(cluster):
+      start = tm.time()
+
       history = train_data(cluster)
       plot_training_result(history, cluster)
+
+      print('Make model done.....')
+      end = tm.time()
+      menit = (end-start)/60
+      print('Time spent => ', menit, ' minutes')
 
 try:
     execute(config.CLUSTER[5])
 except:
     print('ERROR : Program failed executed.....')
-
-print('done.....')
-end = tm.time()
-menit = (end-start)/60
-print('Time spent => ', menit, ' minutes')

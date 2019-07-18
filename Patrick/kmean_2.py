@@ -8,8 +8,6 @@ import os
 
 from imagesearch import config
 
-start = tm.time()
-
 def get_csv(j):
     csv_file = os.path.sep.join([config.CIRCLE_DETECTOR, 'ht'+str(j)+'.csv'])
     ht_result = np.genfromtxt(csv_file, delimiter=",", skip_header=1)
@@ -50,17 +48,14 @@ def save_to_xlsx(labels, csv_file, j):
     df.to_excel(config.KMEAN_XLSX[j], index = False)
 
 def execute(j, K = config.K):
+    start = tm.time()
+
     X, csv_file = get_csv(j)
     centers, labels = find_clusters(X, K)
     plot_cluster(centers, labels, X, j)
     save_to_xlsx(labels, csv_file, j)
 
-try:
-    execute(3)
-except:
-    print('ERROR : Program failed executed.....')
-
-print('done.....')
-end = tm.time()
-menit = (end-start)/60
-print('Time spent => ', menit, ' minutes')
+    print('kmean clustering done.....')
+    end = tm.time()
+    menit = (end-start)/60
+    print('Time spent => ', menit, ' minutes')

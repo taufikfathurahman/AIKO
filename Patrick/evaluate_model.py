@@ -6,12 +6,12 @@ import numpy as np
 
 from imagesearch import config
 
-model = load_model(os.path.sep.join([config.MODEL_PATH, config.CLUSTER[1] + '.h5']))
+model = load_model(os.path.sep.join([config.MODEL_PATH, config.CLUSTER[5] + '.h5']))
 
 model.summary()
 
-image_size = 270
-validation_dir = os.path.sep.join([config.DATASET_DIR, config.CLUSTER[1], config.TEST])
+image_size = 280
+validation_dir = os.path.sep.join([config.DATASET_DIR, config.CLUSTER[4], config.TEST])
 validation_datagen = ImageDataGenerator(rescale=1./255)
 val_batchsize = 16
 

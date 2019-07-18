@@ -6,6 +6,7 @@ import pandas as pd
 
 from imagesearch import config
 import hough_transform as ht
+import kmean_2 as km
 
 ap = argparse.ArgumentParser()
 ap.add_argument(
@@ -42,7 +43,16 @@ new_file['Circle Density'] += list(input_files['Circle Density'])
 new_file_path = os.path.sep.join([config.CIRCLE_DETECTOR, 'ht'+str(3)+'.csv'])
 df = pd.DataFrame(new_file)
 df.to_csv(new_file_path, index = False)
-##################################################################################################
 
-new_file_cluster = pd.read_excel(config.KMEAN_XLSX[3])
+##################################################################################################
+# Call kmean_2.py
+j = 3
+try:
+    km.execute(j)
+except:
+    print('ERROR : Program failed executed.....')
+
+new_file_cluster = pd.read_excel(config.KMEAN_XLSX[j])
 input_img_cluster = list(new_file_cluster['Wood Class'])[-1]
+print(input_img_cluster)
+

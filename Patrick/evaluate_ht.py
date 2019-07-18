@@ -38,7 +38,7 @@ def filter_ht(j):
     count_err = 0
 
     for key in sp_dict:
-        if sp_dict[key] <= 3:
+        if sp_dict[key] < 3:
             d1.append(key)
             d2.append('-')
         else:
@@ -47,8 +47,8 @@ def filter_ht(j):
             count_err += 1
 
     csv_dict = {
-            'Duplikasi <= 3' : d1,
-            'Duplikasi > 3' : d2
+            'Duplikasi < 3' : d1,
+            'Duplikasi => 3' : d2
         }
 
     df = pd.DataFrame(csv_dict)
@@ -61,15 +61,15 @@ def filter_ht(j):
 def evaluate_filtered_data():
     fht0 = os.path.sep.join([config.FILTERED_KMEAN, 
                     'filtered_ht'+str(0)+'.xlsx'])
-    fht0 = list(pd.read_excel(fht0)['Duplikasi > 3'])
+    fht0 = list(pd.read_excel(fht0)['Duplikasi => 3'])
 
     fht1 = os.path.sep.join([config.FILTERED_KMEAN, 
                     'filtered_ht'+str(1)+'.xlsx'])
-    fht1 = list(pd.read_excel(fht1)['Duplikasi > 3'])
+    fht1 = list(pd.read_excel(fht1)['Duplikasi => 3'])
 
     fht2 = os.path.sep.join([config.FILTERED_KMEAN, 
                     'filtered_ht'+str(2)+'.xlsx'])
-    fht2 = list(pd.read_excel(fht2)['Duplikasi > 3'])
+    fht2 = list(pd.read_excel(fht2)['Duplikasi => 3'])
 
     selected_sp = []
     for i in fht0:
