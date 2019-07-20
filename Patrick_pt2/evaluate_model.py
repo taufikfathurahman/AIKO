@@ -6,60 +6,63 @@ import numpy as np
 
 from imagesearch import config
 
-cluster = config.CLUSTER[0]
 
-model = load_model(os.path.sep.join([config.MODEL_PATH, cluster + '.h5']))
+def execute(cluster):
+    model = load_model(os.path.sep.join([config.MODEL_PATH, cluster + '.h5']))
 
-model.summary()
+    model.summary()
 
-image_size = 280
-validation_dir = os.path.sep.join([config.DATASET_DIR, cluster, config.TEST])
-validation_datagen = ImageDataGenerator(rescale=1./255)
-val_batchsize = 16
+    validation_dir = os.path.sep.join([config.DATASET_DIR, cluster, config.TEST])
+    validation_datagen = ImageDataGenerator(rescale=1./255)
+    val_batchsize = 16
 
-# Create a generator for prediction
-validation_generator = validation_datagen.flow_from_directory(
-        validation_dir,
-        target_size=(image_size, image_size),
-        batch_size=val_batchsize,
-        class_mode='categorical',
-        shuffle=False)
+    # Create a generator for prediction
+    validation_generator = validation_datagen.flow_from_directory(
+            validation_dir,
+            target_size=(config.IMAGE_SIZE, config.IMAGE_SIZE),
+            batch_size=val_batchsize,
+            class_mode='categorical',
+            shuffle=False)
 
-# Get the filenames from the generator
-fnames = validation_generator.filenames
+    # Get the filenames from the generator
+    fnames = validation_generator.filenames
 
-# Get the ground truth from generator
-ground_truth = validation_generator.classes
+    # Get the ground truth from generator
+    ground_truth = validation_generator.classes
 
-# Get the label to class mapping from the generator
-label2index = validation_generator.class_indices
+    # Get the label to class mapping from the generator
+    label2index = validation_generator.class_indices
 
-# Getting the mapping from class index to class label
-idx2label = dict((v, [k]) for k, v in label2index.items())
+    # Getting the mapping from class index to class label
+    idx2label = dict((v, [k]) for k, v in label2index.items())
 
-# Get the predictions from the model using the generator
-predictions = model.predict_generator(
-    validation_generator,
-    steps=validation_generator.samples/validation_generator.batch_size,
-    verbose=1)
-predicted_classes = np.argmax(predictions, axis=1)
+    # Get the predictions from the model using the generator
+    predictions = model.predict_generator(
+        validation_generator,
+        steps=validation_generator.samples/validation_generator.batch_size,
+        verbose=1)
+    predicted_classes = np.argmax(predictions, axis=1)
 
-errors = np.where(predicted_classes != ground_truth)[0]
-print("No of errors = {}/{}".format(len(errors),validation_generator.samples))
+    errors = np.where(predicted_classes != ground_truth)[0]
+    print("No of errors = {}/{}".format(len(errors), validation_generator.samples))
 
-# Show the errors
-for i in range(len(errors)):
-    prediction_class = np.argmax(predictions[errors[i]])
-    prediction_label = idx2label[prediction_class]
+    # Show the errors
+    for i in range(len(errors)):
+        prediction_class = np.argmax(predictions[errors[i]])
+        prediction_label = idx2label[prediction_class]
 
-    title = 'Original label:{}, Prediction :{}, confidence : {:.3f}'.format(
-        fnames[errors[i]].split('/')[0],
-        prediction_label,
-        predictions[errors[i]][prediction_class])
+        title = 'Original label:{}, Prediction :{}, confidence : {:.3f}'.format(
+            fnames[errors[i]].split('/')[0],
+            prediction_label,
+            predictions[errors[i]][prediction_class])
 
-    original = load_img('{}/{}'.format(validation_dir,fnames[errors[i]]))
-    plt.figure(figsize=[7,7])
-    plt.axis('off')
-    plt.title(title)
-    plt.imshow(original)
-    plt.show()
+        original = load_img('{}/{}'.format(validation_dir,fnames[errors[i]]))
+        plt.figure(figsize=[7, 7])
+        plt.axis('off')
+        plt.title(title)
+        plt.imshow(original)
+        plt.show()
+
+
+cluster = config.CLUSTER[3]
+execute(cluster)

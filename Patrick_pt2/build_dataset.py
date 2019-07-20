@@ -24,10 +24,10 @@ clusters = {
 }
 print(err_sps)
 for sp in list_sp:
-    if (sp not in err_sps):
+    if sp not in err_sps:
         cluster_id = []
         for wid in range(len(my_cluster[0])):
-            if (my_cluster[0][wid].split('_')[0] == sp):
+            if my_cluster[0][wid].split('_')[0] == sp:
                 cluster_id.append(my_cluster[1][wid])
         mode_cluster = mode(cluster_id)
         clusters[mode_cluster].append(sp)

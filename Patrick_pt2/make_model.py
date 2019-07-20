@@ -57,15 +57,11 @@ def train_data(cluster):
 
     validation_datagen = ImageDataGenerator(rescale=1. / 255)
 
-    # Change the batchsize according to system RAM
-    train_batchsize = 8
-    val_batchsize = 8
-
     # Data Generator for Training data
     train_generator = train_datagen.flow_from_directory(
         train_dir,
         target_size=(image_size, image_size),
-        batch_size=train_batchsize,
+        batch_size=config.BATCH_SIZE,
         class_mode='categorical'
     )
 
@@ -73,7 +69,7 @@ def train_data(cluster):
     validation_generator = validation_datagen.flow_from_directory(
         validation_dir,
         target_size=(image_size, image_size),
-        batch_size=val_batchsize,
+        batch_size=config.BATCH_SIZE,
         class_mode='categorical',
         shuffle=False)
 
