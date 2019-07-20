@@ -3,7 +3,6 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator, load_img
 import os
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
 
 from imagesearch import config
 
@@ -36,27 +35,28 @@ ground_truth = validation_generator.classes
 label2index = validation_generator.class_indices
 
 # Getting the mapping from class index to class label
-idx2label = dict((v,[k]) for k,v in label2index.items())
+idx2label = dict((v, [k]) for k, v in label2index.items())
 
 # Get the predictions from the model using the generator
-predictions = model.predict_generator(validation_generator, 
-        steps=validation_generator.samples/validation_generator.batch_size,
-        verbose=1)
-predicted_classes = np.argmax(predictions,axis=1)
+predictions = model.predict_generator(
+    validation_generator,
+    steps=validation_generator.samples/validation_generator.batch_size,
+    verbose=1)
+predicted_classes = np.argmax(predictions, axis=1)
 
 errors = np.where(predicted_classes != ground_truth)[0]
 print("No of errors = {}/{}".format(len(errors),validation_generator.samples))
 
 # Show the errors
 for i in range(len(errors)):
-    pred_class = np.argmax(predictions[errors[i]])
-    pred_label = idx2label[pred_class]
-    
+    prediction_class = np.argmax(predictions[errors[i]])
+    prediction_label = idx2label[prediction_class]
+
     title = 'Original label:{}, Prediction :{}, confidence : {:.3f}'.format(
         fnames[errors[i]].split('/')[0],
-        pred_label,
-        predictions[errors[i]][pred_class])
-    
+        prediction_label,
+        predictions[errors[i]][prediction_class])
+
     original = load_img('{}/{}'.format(validation_dir,fnames[errors[i]]))
     plt.figure(figsize=[7,7])
     plt.axis('off')

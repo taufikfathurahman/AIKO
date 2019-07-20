@@ -133,6 +133,6 @@ def execute(cluster):
       print('Time spent => ', menit, ' minutes')
 
 try:
-    execute(config.CLUSTER[0])
+    execute(config.CLUSTER[3])
 except:
     print('ERROR : Program failed executed.....')
