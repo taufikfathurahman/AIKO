@@ -1,7 +1,7 @@
 import os
 from imagesearch import config
 
-orig_dir = os.listdir(config.ORIG_DATASET_DIR)
+orig_dir = os.listdir(config.DATASET_DIR)
 
 sum_sp = 0
 for i in orig_dir:

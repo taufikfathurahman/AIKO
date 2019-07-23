@@ -47,7 +47,7 @@ def save_to_xlsx(labels, csv_file, j):
     df['Wood Class'] = labels
     df.to_excel(config.KMEAN_XLSX[j], index = False)
 
-def execute(j, K = config.K):
+def execute(j=3, K=config.K):
     start = tm.time()
 
     X, csv_file = get_csv(j)

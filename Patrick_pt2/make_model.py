@@ -9,6 +9,7 @@ from tensorflow.keras import layers
 from tensorflow.keras import optimizers
 import time as tm
 from tensorflow.keras.applications import VGG16
+import json
 
 from imagesearch import config
 
@@ -19,11 +20,10 @@ def train_data(cluster):
     train_dir = os.path.sep.join([config.DATASET_DIR, cluster, config.TRAIN])
     validation_dir = os.path.sep.join([config.DATASET_DIR, cluster, config.VAL])
     sp_counted = len(os.listdir(train_dir))
-    image_size = 280
 
     vgg_conv = VGG16(weights='imagenet',
                      include_top=False,
-                     input_shape=(image_size, image_size, 3))
+                     input_shape=(config.IMAGE_SIZE, config.IMAGE_SIZE, 3))
 
     for layer in vgg_conv.layers[:-4]:
         layer.trainable = False
@@ -55,12 +55,12 @@ def train_data(cluster):
         fill_mode='nearest'
     )
 
-    validation_datagen = ImageDataGenerator(rescale=1. / 255)
+    validation_datagen = ImageDataGenerator(rescale=1./255)
 
     # Data Generator for Training data
     train_generator = train_datagen.flow_from_directory(
         train_dir,
-        target_size=(image_size, image_size),
+        target_size=(config.IMAGE_SIZE, config.IMAGE_SIZE),
         batch_size=config.BATCH_SIZE,
         class_mode='categorical'
     )
@@ -68,7 +68,7 @@ def train_data(cluster):
     # Data Generator for Validation data
     validation_generator = validation_datagen.flow_from_directory(
         validation_dir,
-        target_size=(image_size, image_size),
+        target_size=(config.IMAGE_SIZE, config.IMAGE_SIZE),
         batch_size=config.BATCH_SIZE,
         class_mode='categorical',
         shuffle=False)
@@ -87,6 +87,12 @@ def train_data(cluster):
         validation_steps=validation_generator.samples / validation_generator.batch_size,
         verbose=1)
 
+    # Save label and model
+    label2index = train_generator.class_indices
+    idx2label = dict((v, [k]) for k, v in label2index.items())
+    with open(os.path.sep.join([config.MODEL_PATH, cluster + '.txt']), 'w') as f:
+        json.dump(idx2label, f)
+
     model.save(os.path.sep.join([config.MODEL_PATH, cluster + '.h5']))
 
     score = model.evaluate_generator(
@@ -95,6 +101,12 @@ def train_data(cluster):
     )
     print('Loss \t\t:', score[0])
     print('Accuracy \t:', score[1] * 100, '%')
+    eval_result = {
+        'Loss': score[0],
+        'Accuracy': str(score[1] * 100) + '%'
+    }
+    with open(os.path.sep.join([config.MODEL_PATH, cluster + '_eval.txt']), 'w') as f:
+        json.dump(eval_result, f)
 
     return history
 

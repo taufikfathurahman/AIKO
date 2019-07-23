@@ -96,17 +96,17 @@ def execute(selected_imgpaths, j=3):
         img_orig, detected_circle, all_circle_rounded = show_circle(img_orig, all_circle)
 
         # save image
-        cv2.imwrite(os.path.sep.join([config.CIRCLE_ROUNDED, fname]), img_orig)
+        # cv2.imwrite(os.path.sep.join([config.CIRCLE_ROUNDED, fname]), img_orig)
 
         # Save to list for cvs file
         circles.append(detected_circle)
-        img_name.append(fname)
+        img_name.append(fname.split('/')[-1])
 
         radius_avg = circle_radius_avg(all_circle_rounded)
         circle_rad.append(radius_avg)
 
         circle_den.append(circle_dens(detected_circle, radius_avg, M, N))
-        print(j, '.', i, '-', my_img)
+        print('HT-', my_img)
         i += 1
 
     csv_dict = {

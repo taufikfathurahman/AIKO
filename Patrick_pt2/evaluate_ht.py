@@ -5,8 +5,6 @@ import time as tm
 
 from imagesearch import config
 
-start = tm.time()
-
 
 def filter_ht(j):
     cluster_data = pd.read_excel(config.KMEAN_XLSX[j])
@@ -87,7 +85,35 @@ def evaluate_filtered_data():
     df.to_excel(os.path.sep.join([config.FILTERED_KMEAN, 'delete_this_sps' + '.xlsx']), index=False)
 
 
+def create_fixed_data():
+    err_sps = pd.read_excel(os.path.sep.join([config.FILTERED_KMEAN, 'delete_this_sps' + '.xlsx']))
+    err_sps = list(err_sps['Sp will be deleted'])
+    ht_result = pd.read_csv(os.path.sep.join([config.CIRCLE_DETECTOR, 'ht1.csv']))
+    img_name = []
+    circles = []
+    circle_rad = []
+    circle_den = []
+
+    for i in range(len(ht_result['Data Kayu'])):
+        if str(ht_result['Data Kayu'][i].split('_')[0]) not in err_sps:
+            img_name.append(ht_result['Data Kayu'][i])
+            circles.append(ht_result['Detected Circle'][i])
+            circle_rad.append(ht_result['Radius Avg'][i])
+            circle_den.append(ht_result['Circle Density'][i])
+
+    csv_dict = {
+        'Data Kayu': img_name,
+        'Detected Circle': circles,
+        'Radius Avg': circle_rad,
+        'Circle Density': circle_den
+    }
+    df = pd.DataFrame(csv_dict)
+    df.to_csv(os.path.sep.join([config.CIRCLE_DETECTOR, 'ht4.csv']), index=False)
+
+
 def execute(j=3):
+    start = tm.time()
+
     count_err = []
     for i in range(j):
         count_err.append(filter_ht(i))
@@ -95,11 +121,14 @@ def execute(j=3):
     print('Err list => ', count_err)
 
     evaluate_filtered_data()
+    create_fixed_data()
+
+    print('\ndone.....')
+    end = tm.time()
+    minute = (end - start) / 60
+    print('Time spent => ', minute, ' minutes')
 
 
 execute()
 
-print('done.....')
-end = tm.time()
-minute = (end - start) / 60
-print('Time spent => ', minute, ' minutes')
+
